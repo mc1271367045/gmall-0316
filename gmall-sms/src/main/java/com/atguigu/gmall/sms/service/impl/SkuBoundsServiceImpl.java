@@ -21,6 +21,7 @@ import com.atguigu.gmall.common.bean.PageParamVo;
 import com.atguigu.gmall.sms.mapper.SkuBoundsMapper;
 import com.atguigu.gmall.sms.entity.SkuBoundsEntity;
 import com.atguigu.gmall.sms.service.SkuBoundsService;
+import org.springframework.transaction.annotation.Transactional;
 
 
 @Service("skuBoundsService")
@@ -43,6 +44,7 @@ public class SkuBoundsServiceImpl extends ServiceImpl<SkuBoundsMapper, SkuBounds
     private SkuLadderMapper ladderMapper;
 
     // 保存营销信息（三张表）
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void saveSkuSales(SkuSaleVo skuSaleVo) {
         // 3.1 保存sms_sku_bounds （保存积分信息）

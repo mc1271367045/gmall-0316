@@ -9,6 +9,7 @@ import com.atguigu.gmall.pms.vo.BaseAttrValueVo;
 import com.atguigu.gmall.pms.vo.SkuVo;
 import com.atguigu.gmall.pms.vo.SpuVo;
 import com.atguigu.gmall.sms.vo.SkuSaleVo;
+import io.seata.spring.annotation.GlobalTransactional;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +91,8 @@ public class SpuServiceImpl extends ServiceImpl<SpuMapper, SpuEntity> implements
     private GmallSmsClient smsClient;
 
     // 大保存方法（9张表）
-    @Transactional(propagation = Propagation.REQUIRED)
+    @GlobalTransactional
+    // @Transactional(propagation = Propagation.REQUIRED)
     @Override
     public void bigSave(SpuVo spuVo) {
 
@@ -163,6 +165,9 @@ public class SpuServiceImpl extends ServiceImpl<SpuMapper, SpuEntity> implements
             BeanUtils.copyProperties(skuVo, skuSaleVo);
             skuSaleVo.setSkuId(skuId);
             this.smsClient.saveSkuSales(skuSaleVo);
+
+            // 制造异常
+            // int i = 1/0;
 
         });
     }
