@@ -100,6 +100,9 @@ public class SearchService {
                 // 把_source反序列化为Goods对象
                 Goods goods = MAPPER.readValue(json, Goods.class);
 
+                // bug测试
+                // System.out.println(goods.getDefaultImage());
+
                 // 把_source中的普通的Title 替换成 高亮结果集中title
                 Map<String, HighlightField> highlightFields = hitsHit.getHighlightFields();
                 if (!CollectionUtils.isEmpty(highlightFields)) {
@@ -352,7 +355,7 @@ public class SearchService {
         );
 
         // 6 指定包含的字段
-        sourceBuilder.fetchSource(new String[]{"skuId", "title", "price", "image", "subTitle"}, null);
+        sourceBuilder.fetchSource(new String[]{"skuId", "title", "price", "defaultImage", "subTitle"}, null);
 
         System.out.println("sourceBuilder = "+ sourceBuilder.toString());
         return sourceBuilder;
