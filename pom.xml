@@ -30,9 +30,7 @@
         <module>gmall-search</module>
         <module>gmall-pms-interface</module>
         <module>gmall-wms-interface</module>
-        <!--        <module>gmall-ums-interface</module>-->
-<!--        <module>gmall-cart-interface</module>-->
-<!--        <module>gmall-oms-interface</module>-->
+        <module>gmall-index</module>
     </modules>
 
     <properties>

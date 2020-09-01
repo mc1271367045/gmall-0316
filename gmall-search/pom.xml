@@ -20,15 +20,22 @@
             <artifactId>gmall-common</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <!--pms接口工程-->
         <dependency>
             <groupId>com.atguigu</groupId>
             <artifactId>gmall-pms-interface</artifactId>
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
+        <!--wms接口工程-->
         <dependency>
             <groupId>com.atguigu</groupId>
             <artifactId>gmall-wms-interface</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+        <!--导入rabbitMQ依赖-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
         </dependency>
 
         <dependency>

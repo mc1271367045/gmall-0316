@@ -24,16 +24,16 @@ spring:
     default-property-inclusion: non_null
   thymeleaf:
     cache: false
-#  rabbitmq:
-#    host: 192.168.18.128
-#    virtual-host: /gorkvh
-#    username: admin
-#    password: admin
-#    listener:
-#      simple:
-#        acknowledge-mode: manual
-#        prefetch: 1
-#        concurrency: 4
+  rabbitmq:
+    host: 192.168.18.128
+    virtual-host: /congge
+    username: congge
+    password: congge
+    listener:
+      simple:
+        acknowledge-mode: manual
+        prefetch: 1
+        concurrency: 4
 feign:
   sentinel:
     enabled: true

@@ -11,6 +11,7 @@ import com.atguigu.gmall.pms.vo.SpuVo;
 import com.atguigu.gmall.sms.vo.SkuSaleVo;
 import io.seata.spring.annotation.GlobalTransactional;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -90,6 +91,9 @@ public class SpuServiceImpl extends ServiceImpl<SpuMapper, SpuEntity> implements
     @Autowired
     private GmallSmsClient smsClient;
 
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
     // 大保存方法（9张表）
     @GlobalTransactional
     // @Transactional(propagation = Propagation.REQUIRED)
@@ -111,6 +115,10 @@ public class SpuServiceImpl extends ServiceImpl<SpuMapper, SpuEntity> implements
 
         // 2.保存sku的三张表
         saveSku(spuVo, spuId);
+
+        // 发送消息到队列
+        this.rabbitTemplate.convertAndSend("PMS_SPU_EXCHANGE", "item.insert", spuId);
+
     }
 
     private void saveSku(SpuVo spuVo, Long spuId) {
@@ -187,8 +195,6 @@ public class SpuServiceImpl extends ServiceImpl<SpuMapper, SpuEntity> implements
         }
     }
 
-
-
     private Long saveSpu(SpuVo spuVo) {
         spuVo.setCreateTime(new Date());
         spuVo.setUpdateTime(spuVo.getCreateTime());
@@ -196,5 +202,6 @@ public class SpuServiceImpl extends ServiceImpl<SpuMapper, SpuEntity> implements
         this.save(spuVo);
         return spuVo.getId();
     }
+
 
 }
