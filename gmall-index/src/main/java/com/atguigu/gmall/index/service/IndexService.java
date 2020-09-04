@@ -2,10 +2,13 @@ package com.atguigu.gmall.index.service;
 
 import com.alibaba.fastjson.JSON;
 import com.atguigu.gmall.common.bean.ResponseVo;
+import com.atguigu.gmall.index.aspect.GmallCache;
 import com.atguigu.gmall.index.feign.GmallPmsClient;
 import com.atguigu.gmall.index.utils.DistributeLock;
 import com.atguigu.gmall.pms.entity.CategoryEntity;
 import org.apache.commons.lang3.StringUtils;
+import org.redisson.api.RLock;
+import org.redisson.api.RedissonClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -37,6 +40,9 @@ public class IndexService {
     @Autowired
     private DistributeLock distributeLock;
 
+    @Autowired
+    private RedissonClient redissonClient;
+
     // 查询一级菜单
     public List<CategoryEntity> queryLv1lCategories() {
         ResponseVo<List<CategoryEntity>> listResponseVo = this.pmsClient.queryCategoriesByPid(0l);
@@ -46,10 +52,21 @@ public class IndexService {
 
     // 查询二级三级菜单
     public List<CategoryEntity> queryCategoriesWithSubByPid(Long pid) {
+
         // 1 查询缓存
         String json = this.stringRedisTemplate.opsForValue().get(KEY_PREFIX + pid);
-        if(json != null){
+        if(StringUtils.isBlank(json)){
             return JSON.parseArray(json, CategoryEntity.class);
+        }
+
+        RLock lock = this.redissonClient.getLock("lock:" + pid); // 只要锁的名称相同就是同一把锁
+        lock.lock(); // 加锁
+
+        // 再次查询缓存
+        String json2 = this.stringRedisTemplate.opsForValue().get(KEY_PREFIX + pid);
+        if(StringUtils.isBlank(json2)){
+            lock.unlock(); // 解锁
+            return JSON.parseArray(json2, CategoryEntity.class);
         }
 
         // 2 远程调用，查询数据库，并放入缓存
@@ -60,7 +77,35 @@ public class IndexService {
         // 为了解决缓存雪崩，过期时间设置随机值
         this.stringRedisTemplate.opsForValue().set(KEY_PREFIX + pid,JSON.toJSONString(categoryEntities),30 + new Random().nextInt(10), TimeUnit.DAYS);
 
+        lock.unlock(); // 解锁
+
         return categoryEntities;
+    }
+
+    // 查询二级三级菜单(AOP封装注解)
+    @GmallCache(prefix = KEY_PREFIX, lock = "lock", timeout = 43200, random = 7200)
+    public List<CategoryEntity> queryCategoriesWithSubByPid2(Long pid) {
+
+        ResponseVo<List<CategoryEntity>> listResponseVo = this.pmsClient.queryCategoriesWithSubByPid(pid);
+        List<CategoryEntity> categoryEntities = listResponseVo.getData();
+        return categoryEntities;
+    }
+
+    // 分布式锁demo3 分布式锁框架
+    public void testLock3() {
+
+        RLock lock = this.redissonClient.getLock("lock"); // 只要锁的名称相同就是同一把锁
+        lock.lock(); // 加锁
+
+        // 获取成功，执行业务
+        String numString = this.stringRedisTemplate.opsForValue().get("num");
+        if (StringUtils.isBlank(numString)) {
+            this.stringRedisTemplate.opsForValue().set("num", "0");
+            return;
+        }
+        int num = Integer.parseInt(numString);
+        this.stringRedisTemplate.opsForValue().set("num", String.valueOf(++num));
+        lock.unlock(); // 解锁
     }
 
     // 子方法
@@ -73,7 +118,7 @@ public class IndexService {
         this.distributeLock.unLock(lockName, uuid);
     }
 
-    // 分布式锁demo2 调用封装的DistributeLock方法，保证可重入
+    // 分布式锁demo2 调用封装的DistributeLock方法，保证可重入,自动续期
     public void testLock2() {
 
         // 通过setnx获取锁  设置过期时间，防止死锁发生

@@ -3,10 +3,9 @@ package com.atguigu.gmall.pms.api;
 import com.atguigu.gmall.common.bean.PageParamVo;
 import com.atguigu.gmall.common.bean.ResponseVo;
 import com.atguigu.gmall.pms.entity.*;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import com.atguigu.gmall.pms.vo.ItemGroupVo;
+import com.atguigu.gmall.pms.vo.SaleAttrValueVo;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -50,6 +49,39 @@ public interface GmallPmsApi {
     @GetMapping("pms/category/cates/{pid}")
     ResponseVo<List<CategoryEntity>> queryCategoriesWithSubByPid(@PathVariable("pid")Long pid);
 
+    // 根据id查询sku信息
+    @GetMapping("pms/sku/{id}")
+    ResponseVo<SkuEntity> querySkuById(@PathVariable("id") Long id);
+
+    // 根据id查询spu的描述信息
+    @GetMapping("pms/spudesc/{spuId}")
+    ResponseVo<SpuDescEntity> querySpuDescById(@PathVariable("spuId") Long spuId);
+
+    // 根据三级分类的id查询一二三及分类
+    @GetMapping("pms/category/all/{cid}")
+    public ResponseVo<List<CategoryEntity>> query123CategoriesByCid3(@PathVariable("cid")Long cid);
+
+    // 根据skuId查询sku的图片
+    @GetMapping("pms/skuimages/sku/{skuId}")
+    ResponseVo<List<SkuImagesEntity>> queryImagesBySkuId(@PathVariable("skuId")Long skuId);
+
+    // 根据spuid查询所有销售属性的取值
+    @GetMapping("pms/skuattrvalue/spu/{spuId}")
+    public ResponseVo<List<SaleAttrValueVo>> queryAllSaleAttrValueBySpuId(@PathVariable("spuId")Long spuId);
+
+    // 根据skuid查询该sku的销售属性
+    @GetMapping("pms/skuattrvalue/sku/{skuId}")
+    public ResponseVo<List<SkuAttrValueEntity>> querySaleAttrValueBySkuId(@PathVariable("skuId")Long skuId);
+
+    // 根据spuid查询所有销售属性的取值
+    @GetMapping("pms/skuattrvalue/sku/spu/{spuId}")
+    public ResponseVo<String> querySaleAttrMappingSkuIdBySpuId(@PathVariable("spuId")Long spuId);
+
+    // 查询组及组下参数和值
+    @GetMapping("pms/attrgroup/withattr/withvalue/{cid}")
+    public ResponseVo<List<ItemGroupVo>> queryGroupWithAttrValue(@PathVariable("cid")Long cid,
+                                                                 @RequestParam("spuId") Long spuId,
+                                                                 @RequestParam("skuId")Long skuId);
 
 
 }

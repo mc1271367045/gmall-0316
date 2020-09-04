@@ -35,6 +35,7 @@ public class SpuAttrValueController {
     private SpuAttrValueService spuAttrValueService;
 
 
+
     @GetMapping("search/{spuId}")
     public ResponseVo<List<SpuAttrValueEntity>> querySearchAttrValueBySpuId(@PathVariable("spuId")Long spuId){
         List<SpuAttrValueEntity> spuAttrValueEntities = this.spuAttrValueService.querySearchAttrValueBySpuId(spuId);

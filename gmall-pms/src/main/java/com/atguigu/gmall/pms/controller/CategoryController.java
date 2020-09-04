@@ -35,6 +35,14 @@ public class CategoryController {
     @Autowired
     private CategoryService categoryService;
 
+
+    // 根据三级分类的id查询一二三及分类
+    @GetMapping("all/{cid}")
+    public ResponseVo<List<CategoryEntity>> query123CategoriesByCid3(@PathVariable("cid")Long cid){
+        List<CategoryEntity> categoryEntities = this.categoryService.query123CategoriesByCid3(cid);
+        return ResponseVo.ok(categoryEntities);
+    }
+
     // 商品管理分类维护的树形结构
     @GetMapping("parent/{parentId}")
     public ResponseVo<List<CategoryEntity>> queryCategoriesByPid(@PathVariable("parentId")Long pid){
