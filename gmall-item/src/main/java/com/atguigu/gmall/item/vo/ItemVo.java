@@ -34,7 +34,7 @@ public class ItemVo {
     private String title;
     private String subTitle;
     private BigDecimal price;
-    private BigDecimal weight;
+    private Integer weight;
     private String defaultImage;
 
     // sku图片列表

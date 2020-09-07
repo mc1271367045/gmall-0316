@@ -134,7 +134,7 @@ public class ItemService {
             // 根据sku中spuId查询spu的描述信息（海报信息）
             ResponseVo<SpuDescEntity> descEntityResponseVo = this.pmsClient.querySpuDescById(skuEntity.getSpuId());
             SpuDescEntity spuDescEntity = descEntityResponseVo.getData();
-            if (spuDescEntity != null) {
+            if (spuDescEntity != null && StringUtils.isNotBlank(spuDescEntity.getDecript())) {
                 itemVo.setSpuImages(Arrays.asList(StringUtils.split(spuDescEntity.getDecript(), ",")));
             }
         }, threadPoolExecutor);
