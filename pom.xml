@@ -34,6 +34,8 @@
         <module>gmall-item</module>
         <module>gmall-ums-interface</module>
         <module>gmall-auth</module>
+        <module>gmall-cart</module>
+        <module>gmall-cart-interface</module>
     </modules>
 
     <properties>

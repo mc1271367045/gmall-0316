@@ -47,13 +47,13 @@ spring:
           uri: lb://auth-service
           predicates:
             - Host=sso.gmall.com
-#        - id: cart-route
-#          uri: lb://cart-service
-#          predicates:
-#            - Host=cart.gmall.com
-#        x-forwarded: # 当服务转发时，把域名信息通过host头信息转发给具体的服务
-#          host-enabled: true
-#auth:
-#  jwt:
-#    pubKeyPath: F:\\Java\\rsa\\rsa.pub
-#    cookieName: GMALL_TOKEN
+        - id: cart-route
+          uri: lb://cart-service
+          predicates:
+            - Host=cart.gmall.com
+        x-forwarded: # 当服务转发时，把域名信息通过host头信息转发给具体的服务
+          host-enabled: true
+auth:
+  jwt:
+    pubKeyPath: E:\javaDianshang\rsa\rsa.pub
+    cookieName: GMALL_TOKEN
